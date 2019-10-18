@@ -142,6 +142,9 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
     if (style.containsSame(NotusAttribute.italic)) {
       result = result.merge(theme.italicStyle);
     }
+    if (style.containsSame(NotusAttribute.underline)) {
+      result = result.merge(theme.underlineStyle);
+    }
     if (style.contains(NotusAttribute.link)) {
       result = result.merge(theme.linkStyle);
     }
@@ -155,6 +158,9 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
     if (embed.type == EmbedType.horizontalRule) {
       return ZefyrHorizontalRule(node: node);
     } else if (embed.type == EmbedType.image) {
+      return ZefyrImage(node: node, delegate: scope.imageDelegate);
+    } else if (embed.type == EmbedType.biliVideo) {
+      //TODO:
       return ZefyrImage(node: node, delegate: scope.imageDelegate);
     } else {
       throw UnimplementedError('Unimplemented embed type ${embed.type}');

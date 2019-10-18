@@ -110,6 +110,9 @@ class ZefyrButton extends StatelessWidget {
       return onPressed;
     } else if (isAttributeAction) {
       final attribute = kZefyrToolbarAttributeActions[action];
+      if (action == ZefyrToolbarAction.link) {
+        return () => _insertLink(editor);
+      }
       if (attribute is NotusAttribute) {
         return () => _toggleAttribute(attribute, editor);
       }
@@ -117,6 +120,12 @@ class ZefyrButton extends StatelessWidget {
       return () => toolbar.closeOverlay();
     } else if (action == ZefyrToolbarAction.hideKeyboard) {
       return () => editor.hideKeyboard();
+    } else if (action == ZefyrToolbarAction.galleryImage) {
+      return () => _pickFromGallery(editor);
+    } else if (action == ZefyrToolbarAction.cameraImage) {
+      return () => _pickFromCamera(editor);
+    } else if (action == ZefyrToolbarAction.biliVideo) {
+      return () => _insertBiliVideo(editor);
     }
 
     return null;
@@ -129,6 +138,31 @@ class ZefyrButton extends StatelessWidget {
     } else {
       editor.formatSelection(attribute);
     }
+  }
+
+  void _pickFromGallery(ZefyrScope editor) async {
+    final image = await editor.imageDelegate
+        .pickImage(editor.imageDelegate.gallerySource);
+    if (image != null) {
+      editor.formatSelection(NotusAttribute.embed.image(image));
+    }
+  }
+
+  void _pickFromCamera(ZefyrScope editor) async {
+    final image =
+        await editor.imageDelegate.pickImage(editor.imageDelegate.cameraSource);
+    if (image != null) {
+      editor.formatSelection(NotusAttribute.embed.image(image));
+    }
+  }
+
+  void _insertBiliVideo(ZefyrScope editor) {
+    editor.formatSelection(
+        NotusAttribute.embed.biliVideo('asset://images/breeze.jpg'));
+  }
+
+  void _insertLink(ZefyrScope editor) {
+    editor.insert('string', NotusAttribute.link.fromString('www.baidu.com'));
   }
 }
 
@@ -267,31 +301,11 @@ class _ImageButtonState extends State<ImageButton> {
     final buttons = Row(
       children: <Widget>[
         SizedBox(width: 8.0),
-        toolbar.buildButton(context, ZefyrToolbarAction.cameraImage,
-            onPressed: _pickFromCamera),
-        toolbar.buildButton(context, ZefyrToolbarAction.galleryImage,
-            onPressed: _pickFromGallery),
+        toolbar.buildButton(context, ZefyrToolbarAction.cameraImage),
+        toolbar.buildButton(context, ZefyrToolbarAction.galleryImage),
       ],
     );
     return ZefyrToolbarScaffold(body: buttons);
-  }
-
-  void _pickFromCamera() async {
-    final editor = ZefyrToolbar.of(context).editor;
-    final image =
-        await editor.imageDelegate.pickImage(editor.imageDelegate.cameraSource);
-    if (image != null) {
-      editor.formatSelection(NotusAttribute.embed.image(image));
-    }
-  }
-
-  void _pickFromGallery() async {
-    final editor = ZefyrToolbar.of(context).editor;
-    final image = await editor.imageDelegate
-        .pickImage(editor.imageDelegate.gallerySource);
-    if (image != null) {
-      editor.formatSelection(NotusAttribute.embed.image(image));
-    }
   }
 }
 

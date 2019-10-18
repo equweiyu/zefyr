@@ -73,6 +73,7 @@ class NotusAttribute<T> implements NotusAttributeBuilder<T> {
   static final Map<String, NotusAttributeBuilder> _registry = {
     NotusAttribute.bold.key: NotusAttribute.bold,
     NotusAttribute.italic.key: NotusAttribute.italic,
+    NotusAttribute.underline.key: NotusAttribute.underline,
     NotusAttribute.link.key: NotusAttribute.link,
     NotusAttribute.heading.key: NotusAttribute.heading,
     NotusAttribute.block.key: NotusAttribute.block,
@@ -86,6 +87,8 @@ class NotusAttribute<T> implements NotusAttributeBuilder<T> {
 
   /// Italic style attribute.
   static const italic = _ItalicAttribute();
+
+  static const underline = _UnderLineAttribute();
 
   /// Link style attribute.
   // ignore: const_eval_throws_exception
@@ -327,6 +330,10 @@ class _ItalicAttribute extends NotusAttribute<bool> {
   const _ItalicAttribute() : super._('i', NotusAttributeScope.inline, true);
 }
 
+class _UnderLineAttribute extends NotusAttribute<bool> {
+  const _UnderLineAttribute() : super._('u', NotusAttributeScope.inline, true);
+}
+
 /// Builder for link attribute values.
 ///
 /// There is no need to use this class directly, consider using
@@ -394,6 +401,8 @@ class EmbedAttributeBuilder
 
   NotusAttribute<Map<String, dynamic>> image(String source) =>
       EmbedAttribute.image(source);
+  NotusAttribute<Map<String, dynamic>> biliVideo(String source) =>
+      EmbedAttribute.biliVideo(source);
 
   @override
   NotusAttribute<Map<String, dynamic>> get unset => EmbedAttribute._(null);
@@ -403,13 +412,14 @@ class EmbedAttributeBuilder
 }
 
 /// Type of embedded content.
-enum EmbedType { horizontalRule, image }
+enum EmbedType { horizontalRule, image, biliVideo }
 
 class EmbedAttribute extends NotusAttribute<Map<String, dynamic>> {
   static const _kValueEquality = MapEquality<String, dynamic>();
   static const _kEmbed = 'embed';
   static const _kHorizontalRuleEmbed = 'hr';
   static const _kImageEmbed = 'image';
+  static const _kBiliVideoEmbed = 'biliVideo';
 
   EmbedAttribute._(Map<String, dynamic> value)
       : super._(_kEmbed, NotusAttributeScope.inline, value);
@@ -420,10 +430,15 @@ class EmbedAttribute extends NotusAttribute<Map<String, dynamic>> {
   EmbedAttribute.image(String source)
       : this._(<String, dynamic>{'type': _kImageEmbed, 'source': source});
 
+  EmbedAttribute.biliVideo(String source)
+      : this._(<String, dynamic>{'type': _kBiliVideoEmbed, 'source': source});
+
   /// Type of this embed.
   EmbedType get type {
     if (value['type'] == _kHorizontalRuleEmbed) return EmbedType.horizontalRule;
     if (value['type'] == _kImageEmbed) return EmbedType.image;
+    if (value['type'] == _kBiliVideoEmbed) return EmbedType.biliVideo;
+
     assert(false, 'Unknown embed attribute value $value.');
     return null;
   }

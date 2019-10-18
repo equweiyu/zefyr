@@ -15,6 +15,7 @@ import 'theme.dart';
 enum ZefyrToolbarAction {
   bold,
   italic,
+  underline,
   link,
   unlink,
   clipboardCopy,
@@ -34,11 +35,13 @@ enum ZefyrToolbarAction {
   hideKeyboard,
   close,
   confirm,
+  biliVideo,
 }
 
 final kZefyrToolbarAttributeActions = <ZefyrToolbarAction, NotusAttributeKey>{
   ZefyrToolbarAction.bold: NotusAttribute.bold,
   ZefyrToolbarAction.italic: NotusAttribute.italic,
+  ZefyrToolbarAction.underline: NotusAttribute.underline,
   ZefyrToolbarAction.link: NotusAttribute.link,
   ZefyrToolbarAction.heading: NotusAttribute.heading,
   ZefyrToolbarAction.headingLevel1: NotusAttribute.heading.level1,
@@ -251,15 +254,23 @@ class ZefyrToolbarState extends State<ZefyrToolbar>
   List<Widget> _buildButtons(BuildContext context) {
     final buttons = <Widget>[
       buildButton(context, ZefyrToolbarAction.bold),
-      buildButton(context, ZefyrToolbarAction.italic),
-      LinkButton(),
-      HeadingButton(),
-      buildButton(context, ZefyrToolbarAction.bulletList),
-      buildButton(context, ZefyrToolbarAction.numberList),
-      buildButton(context, ZefyrToolbarAction.quote),
-      buildButton(context, ZefyrToolbarAction.code),
+      buildButton(context, ZefyrToolbarAction.underline),
+      buildButton(context, ZefyrToolbarAction.headingLevel1),
+      buildButton(context, ZefyrToolbarAction.headingLevel2),
+      buildButton(context, ZefyrToolbarAction.galleryImage),
       buildButton(context, ZefyrToolbarAction.horizontalRule),
-      if (editor.imageDelegate != null) ImageButton(),
+      buildButton(context, ZefyrToolbarAction.link),
+      buildButton(context, ZefyrToolbarAction.biliVideo),
+      // buildButton(context, ZefyrToolbarAction.bold),
+      // buildButton(context, ZefyrToolbarAction.italic),
+      // LinkButton(),
+      // HeadingButton(),
+      // buildButton(context, ZefyrToolbarAction.bulletList),
+      // buildButton(context, ZefyrToolbarAction.numberList),
+      // buildButton(context, ZefyrToolbarAction.quote),
+      // buildButton(context, ZefyrToolbarAction.code),
+      // buildButton(context, ZefyrToolbarAction.horizontalRule),
+      // if (editor.imageDelegate != null) ImageButton(),
     ];
     return buttons;
   }
@@ -337,6 +348,7 @@ class _DefaultZefyrToolbarDelegate implements ZefyrToolbarDelegate {
   static const kDefaultButtonIcons = {
     ZefyrToolbarAction.bold: Icons.format_bold,
     ZefyrToolbarAction.italic: Icons.format_italic,
+    ZefyrToolbarAction.underline: Icons.format_underlined,
     ZefyrToolbarAction.link: Icons.link,
     ZefyrToolbarAction.unlink: Icons.link_off,
     ZefyrToolbarAction.clipboardCopy: Icons.content_copy,
@@ -353,6 +365,8 @@ class _DefaultZefyrToolbarDelegate implements ZefyrToolbarDelegate {
     ZefyrToolbarAction.hideKeyboard: Icons.keyboard_hide,
     ZefyrToolbarAction.close: Icons.close,
     ZefyrToolbarAction.confirm: Icons.check,
+    //TODO:icon
+    ZefyrToolbarAction.biliVideo: Icons.video_call,
   };
 
   static const kSpecialIconSizes = {

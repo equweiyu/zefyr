@@ -124,8 +124,8 @@ class ZefyrController extends ChangeNotifier {
       // some style, then we apply it to our document.
       if (delta != null &&
           toggledStyles.isNotEmpty &&
-          delta.length == 2 &&
-          delta[1].isInsert) {
+          (delta.length == 2 || delta.length == 1) &&
+          delta.last.isInsert) {
         // Apply it.
         Delta retainDelta = new Delta()
           ..retain(index)
@@ -167,7 +167,8 @@ class ZefyrController extends ChangeNotifier {
 
     if (length == 0 &&
         (attribute.key == NotusAttribute.bold.key ||
-            attribute.key == NotusAttribute.italic.key)) {
+            attribute.key == NotusAttribute.italic.key ||
+            attribute.key == NotusAttribute.underline.key)) {
       // Add the attribute to our toggledStyle. It will be used later upon insertion.
       _toggledStyles = toggledStyles.put(attribute);
     }
@@ -190,6 +191,16 @@ class ZefyrController extends ChangeNotifier {
     int index = _selection.start;
     int length = _selection.end - index;
     formatText(index, length, attribute);
+  }
+
+  void insert(String string, NotusAttribute attribute) {
+    Delta change = Delta()
+      ..retain(_selection.end)
+      ..insert(string, attribute.toJson());
+    _document.compose(change, ChangeSource.local);
+    updateSelection(
+        TextSelection.collapsed(offset: _selection.end + string.length),
+        source: ChangeSource.local);
   }
 
   /// Returns style of specified text range.

@@ -181,6 +181,10 @@ class ZefyrScope extends ChangeNotifier {
     _controller.formatSelection(value);
   }
 
+  void insert(String string, NotusAttribute style) {
+    _controller.insert(string, style);
+  }
+
   void focus() {
     assert(isEditable);
     assert(!_disposed);

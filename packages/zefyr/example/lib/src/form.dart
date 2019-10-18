@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:zefyr/zefyr.dart';
 
@@ -34,6 +36,14 @@ class _FormEmbeddedScreenState extends State<FormEmbeddedScreen> {
         backgroundColor: Colors.grey.shade200,
         brightness: Brightness.light,
         title: ZefyrLogo(),
+        actions: <Widget>[
+          Builder(
+            builder: (context) => IconButton(
+              icon: Icon(Icons.save),
+              onPressed: () => _saveDocument(context),
+            ),
+          )
+        ],
       ),
       body: ZefyrScaffold(
         child: Padding(
@@ -42,6 +52,11 @@ class _FormEmbeddedScreenState extends State<FormEmbeddedScreen> {
         ),
       ),
     );
+  }
+
+  void _saveDocument(BuildContext context) {
+    final contents = jsonEncode(_controller.document);
+    print(contents);
   }
 
   Widget buildEditor() {

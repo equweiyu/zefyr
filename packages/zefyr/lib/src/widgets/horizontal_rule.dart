@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notus/notus.dart';
+import 'package:path_drawing/path_drawing.dart';
 
 import 'editable_box.dart';
 
@@ -76,9 +77,21 @@ class RenderHorizontalRule extends RenderEditableBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
-    final rect = Rect.fromLTWH(0.0, 0.0, size.width, _kThickness);
-    final paint = ui.Paint()..color = Colors.grey.shade200;
-    context.canvas.drawRect(rect.shift(offset), paint);
+    // final rect = Rect.fromLTWH(0.0, 0.0, size.width, _kThickness);
+    // final paint = ui.Paint()..color = Colors.grey.shade200;
+    // context.canvas.drawRect(rect.shift(offset), paint);
+    final paint = ui.Paint()
+      ..color = Colors.grey.shade600
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+    final _path = Path()
+      ..lineTo(size.width, 0.0)
+      ..shift(offset);
+    final _dashPath = dashPath(
+      _path,
+      dashArray: CircularIntervalList<double>(<double>[5.0, 2.5]),
+    );
+    context.canvas.drawPath(_dashPath, paint);
   }
 
   @override
