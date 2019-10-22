@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:notus/notus.dart';
 import 'package:zefyr/util.dart';
+import 'package:zefyr/zefyr.dart';
 
 import 'controller.dart';
 import 'editable_box.dart';
@@ -266,6 +267,7 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
       _didCaretTap = true;
     }
     _scope.controller.updateSelection(selection, source: ChangeSource.local);
+    _scope.controller.textTap(selection);
   }
 
   void _handleLongPress() {
