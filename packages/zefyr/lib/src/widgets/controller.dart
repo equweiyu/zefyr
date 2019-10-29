@@ -28,12 +28,12 @@ enum FocusOwner {
 /// Controls instance of [ZefyrEditor].
 class ZefyrController extends ChangeNotifier {
   ZefyrController(NotusDocument document,
-      {void Function(TextSelection) textSelectionTap})
+      {bool Function(TextSelection) textSelectionTap})
       : assert(document != null),
         _document = document,
         textSelectionTap = textSelectionTap;
 
-  void Function(TextSelection) textSelectionTap;
+  bool Function(TextSelection) textSelectionTap;
 
   /// Zefyr document managed by this controller.
   NotusDocument get document => _document;
@@ -63,10 +63,11 @@ class ZefyrController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void textTap(TextSelection value) {
+  bool textTap(TextSelection value) {
     if (textSelectionTap != null) {
-      textSelectionTap(value);
+      return textSelectionTap(value);
     }
+    return false;
   }
 
   // Updates selection without triggering notifications to listeners.
