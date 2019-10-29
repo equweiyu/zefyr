@@ -4,6 +4,7 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:notus/notus.dart';
 
@@ -56,11 +57,7 @@ final kZefyrToolbarAttributeActions = <ZefyrToolbarAction, NotusAttributeKey>{
 
 /// Allows customizing appearance of [ZefyrToolbar].
 abstract class ZefyrToolbarDelegate {
-  /// Builds toolbar button for specified [action].
-  ///
-  /// Returned widget is usually an instance of [ZefyrButton].
-  Widget buildButton(BuildContext context, ZefyrToolbarAction action,
-      {VoidCallback onPressed});
+  List<Widget> buildButtons(BuildContext context, ZefyrScope editor);
 }
 
 /// Scaffold for [ZefyrToolbar].
@@ -69,17 +66,14 @@ class ZefyrToolbarScaffold extends StatelessWidget {
     Key key,
     @required this.body,
     this.trailing,
-    this.autoImplyTrailing = true,
   }) : super(key: key);
 
   final Widget body;
   final Widget trailing;
-  final bool autoImplyTrailing;
 
   @override
   Widget build(BuildContext context) {
     final theme = ZefyrTheme.of(context).toolbarTheme;
-    final toolbar = ZefyrToolbar.of(context);
     final constraints =
         BoxConstraints.tightFor(height: ZefyrToolbar.kToolbarHeight);
     final children = <Widget>[
@@ -88,12 +82,15 @@ class ZefyrToolbarScaffold extends StatelessWidget {
 
     if (trailing != null) {
       children.add(trailing);
-    } else if (autoImplyTrailing) {
-      children.add(toolbar.buildButton(context, ZefyrToolbarAction.close));
     }
     return Container(
       constraints: constraints,
-      child: Material(color: theme.color, child: Row(children: children)),
+      child: Material(
+          color: theme.color,
+          child: Row(
+            children: children,
+            mainAxisAlignment: MainAxisAlignment.center,
+          )),
     );
   }
 }
@@ -145,7 +142,6 @@ class ZefyrToolbarState extends State<ZefyrToolbar>
   final Key _toolbarKey = UniqueKey();
   final Key _overlayKey = UniqueKey();
 
-  ZefyrToolbarDelegate _delegate;
   AnimationController _overlayAnimation;
   WidgetBuilder _overlayBuilder;
   Completer<void> _overlayCompleter;
@@ -159,11 +155,6 @@ class ZefyrToolbarState extends State<ZefyrToolbar>
         closeOverlay();
       }
     });
-  }
-
-  Widget buildButton(BuildContext context, ZefyrToolbarAction action,
-      {VoidCallback onPressed}) {
-    return _delegate.buildButton(context, action, onPressed: onPressed);
   }
 
   Future<void> showOverlay(WidgetBuilder builder) async {
@@ -195,7 +186,6 @@ class ZefyrToolbarState extends State<ZefyrToolbar>
   @override
   void initState() {
     super.initState();
-    _delegate = widget.delegate ?? _DefaultZefyrToolbarDelegate();
     _overlayAnimation =
         AnimationController(vsync: this, duration: Duration(milliseconds: 100));
     _selection = editor.selection;
@@ -204,9 +194,6 @@ class ZefyrToolbarState extends State<ZefyrToolbar>
   @override
   void didUpdateWidget(ZefyrToolbar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.delegate != oldWidget.delegate) {
-      _delegate = widget.delegate ?? _DefaultZefyrToolbarDelegate();
-    }
   }
 
   @override
@@ -223,8 +210,7 @@ class ZefyrToolbarState extends State<ZefyrToolbar>
     // new state each time we toggle overlay.
     final toolbar = ZefyrToolbarScaffold(
       key: _toolbarKey,
-      body: ZefyrButtonList(buttons: _buildButtons(context)),
-      trailing: buildButton(context, ZefyrToolbarAction.hideKeyboard),
+      body: ZefyrButtonList(buttons: _buildButtons(context, editor)),
     );
 
     layers.add(toolbar);
@@ -251,28 +237,8 @@ class ZefyrToolbarState extends State<ZefyrToolbar>
     );
   }
 
-  List<Widget> _buildButtons(BuildContext context) {
-    final buttons = <Widget>[
-      buildButton(context, ZefyrToolbarAction.bold),
-      buildButton(context, ZefyrToolbarAction.underline),
-      buildButton(context, ZefyrToolbarAction.headingLevel1),
-      buildButton(context, ZefyrToolbarAction.headingLevel2),
-      buildButton(context, ZefyrToolbarAction.galleryImage),
-      buildButton(context, ZefyrToolbarAction.horizontalRule),
-      buildButton(context, ZefyrToolbarAction.link),
-      buildButton(context, ZefyrToolbarAction.biliVideo),
-      // buildButton(context, ZefyrToolbarAction.bold),
-      // buildButton(context, ZefyrToolbarAction.italic),
-      // LinkButton(),
-      // HeadingButton(),
-      // buildButton(context, ZefyrToolbarAction.bulletList),
-      // buildButton(context, ZefyrToolbarAction.numberList),
-      // buildButton(context, ZefyrToolbarAction.quote),
-      // buildButton(context, ZefyrToolbarAction.code),
-      // buildButton(context, ZefyrToolbarAction.horizontalRule),
-      // if (editor.imageDelegate != null) ImageButton(),
-    ];
-    return buttons;
+  List<Widget> _buildButtons(BuildContext context, ZefyrScope editor) {
+    return widget.delegate.buildButtons(context, editor);
   }
 }
 
@@ -345,68 +311,44 @@ class _ZefyrButtonListState extends State<ZefyrButtonList> {
 }
 
 class _DefaultZefyrToolbarDelegate implements ZefyrToolbarDelegate {
-  static const kDefaultButtonIcons = {
-    ZefyrToolbarAction.bold: Icons.format_bold,
-    ZefyrToolbarAction.italic: Icons.format_italic,
-    ZefyrToolbarAction.underline: Icons.format_underlined,
-    ZefyrToolbarAction.link: Icons.link,
-    ZefyrToolbarAction.unlink: Icons.link_off,
-    ZefyrToolbarAction.clipboardCopy: Icons.content_copy,
-    ZefyrToolbarAction.openInBrowser: Icons.open_in_new,
-    ZefyrToolbarAction.heading: Icons.format_size,
-    ZefyrToolbarAction.bulletList: Icons.format_list_bulleted,
-    ZefyrToolbarAction.numberList: Icons.format_list_numbered,
-    ZefyrToolbarAction.code: Icons.code,
-    ZefyrToolbarAction.quote: Icons.format_quote,
-    ZefyrToolbarAction.horizontalRule: Icons.remove,
-    ZefyrToolbarAction.image: Icons.photo,
-    ZefyrToolbarAction.cameraImage: Icons.photo_camera,
-    ZefyrToolbarAction.galleryImage: Icons.photo_library,
-    ZefyrToolbarAction.hideKeyboard: Icons.keyboard_hide,
-    ZefyrToolbarAction.close: Icons.close,
-    ZefyrToolbarAction.confirm: Icons.check,
-    //TODO:icon
-    ZefyrToolbarAction.biliVideo: Icons.video_call,
-  };
-
-  static const kSpecialIconSizes = {
-    ZefyrToolbarAction.unlink: 20.0,
-    ZefyrToolbarAction.clipboardCopy: 20.0,
-    ZefyrToolbarAction.openInBrowser: 20.0,
-    ZefyrToolbarAction.close: 20.0,
-    ZefyrToolbarAction.confirm: 20.0,
-  };
-
-  static const kDefaultButtonTexts = {
-    ZefyrToolbarAction.headingLevel1: 'H1',
-    ZefyrToolbarAction.headingLevel2: 'H2',
-    ZefyrToolbarAction.headingLevel3: 'H3',
-  };
-
   @override
-  Widget buildButton(BuildContext context, ZefyrToolbarAction action,
-      {VoidCallback onPressed}) {
-    final theme = Theme.of(context);
-    if (kDefaultButtonIcons.containsKey(action)) {
-      final icon = kDefaultButtonIcons[action];
-      final size = kSpecialIconSizes[action];
-      return ZefyrButton.icon(
-        action: action,
-        icon: icon,
-        iconSize: size,
-        onPressed: onPressed,
-      );
+  List<Widget> buildButtons(BuildContext context, ZefyrScope editor) {
+    return [
+      ZefyrButton.icon(
+        icon: Icons.keyboard,
+        onPressed: () => editor.hideKeyboard(),
+      ),
+      ZefyrButton.icon(
+        icon: Icons.text_format,
+        onPressed: () {},
+      ),
+      ZefyrButton.icon(
+        icon: Icons.photo_library,
+        onPressed: () => _pickFromGallery(editor),
+      ),
+      ZefyrButton.icon(
+        icon: Icons.border_horizontal,
+        onPressed: () =>
+            _toggleAttribute(NotusAttribute.embed.horizontalRule, editor),
+      ),
+    ];
+  }
+
+  void _toggleAttribute(NotusAttribute attribute, ZefyrScope editor) {
+    final isToggled = editor.selectionStyle.containsSame(attribute);
+    if (isToggled) {
+      editor.formatSelection(attribute.unset);
     } else {
-      final text = kDefaultButtonTexts[action];
-      assert(text != null);
-      final style = theme.textTheme.caption
-          .copyWith(fontWeight: FontWeight.bold, fontSize: 14.0);
-      return ZefyrButton.text(
-        action: action,
-        text: text,
-        style: style,
-        onPressed: onPressed,
-      );
+      editor.formatSelection(attribute);
+    }
+  }
+
+  void _pickFromGallery(ZefyrScope editor) async {
+    final images = await editor.imageDelegate.pickFromGallery();
+    for (var image in images) {
+      if (image != null) {
+        editor.formatSelection(NotusAttribute.embed.image(image));
+      }
     }
   }
 }

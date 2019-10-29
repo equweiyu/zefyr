@@ -16,12 +16,6 @@ import 'editable_box.dart';
 // TODO: allow configuring image sources and related toolbar buttons.
 @experimental
 abstract class ZefyrImageDelegate<S> {
-  /// Unique key to identify camera source.
-  S get cameraSource;
-
-  /// Unique key to identify gallery source.
-  S get gallerySource;
-
   /// Builds image widget for specified image [key].
   ///
   /// The [key] argument contains value which was previously returned from
@@ -36,7 +30,8 @@ abstract class ZefyrImageDelegate<S> {
   /// Depending on your application returned key may represent a path to
   /// an image file on user's device, an HTTP link, or an identifier generated
   /// by a file hosting service like AWS S3 or Google Drive.
-  Future<String> pickImage(S source);
+  Future<List<String>> pickFromGallery();
+  Future<List<String>> pickFromCamera();
 }
 
 class ZefyrImage extends StatefulWidget {

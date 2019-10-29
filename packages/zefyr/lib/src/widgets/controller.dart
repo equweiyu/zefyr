@@ -27,9 +27,13 @@ enum FocusOwner {
 
 /// Controls instance of [ZefyrEditor].
 class ZefyrController extends ChangeNotifier {
-  ZefyrController(NotusDocument document)
+  ZefyrController(NotusDocument document,
+      {void Function(TextSelection) textSelectionTap})
       : assert(document != null),
-        _document = document;
+        _document = document,
+        textSelectionTap = textSelectionTap;
+
+  void Function(TextSelection) textSelectionTap;
 
   /// Zefyr document managed by this controller.
   NotusDocument get document => _document;
@@ -60,25 +64,8 @@ class ZefyrController extends ChangeNotifier {
   }
 
   void textTap(TextSelection value) {
-    //TODO:点击更新链接
-    print('textTap');
-    final style = getSelectionStyle();
-    print(style);
-    if (style.contains(NotusAttribute.link)) {
-      print(getSelectionStyle());
-      formatSelection(NotusAttribute.link.fromString('www.google.com'));
-      print(getSelectionStyle());
-    }
-    if (style.contains(NotusAttribute.embed)) {
-      EmbedAttribute embed = style.get(NotusAttribute.embed);
-      if (embed.type == EmbedType.biliVideo) {
-        print(getSelectionStyle());
-        final _attribute = NotusAttribute.embed.biliVideo(
-            'file:///Users/baitianwei/Library/Developer/CoreSimulator/Devices/88044576-A4B8-461D-A9F6-2B96FFCD49DA/data/Containers/Data/Application/583E46D5-1E38-4DC2-AC7F-97BBF21A71B4/tmp/image_picker_8EC8EF20-F6E7-49DF-8B1B-57CF95841AE1-36624-00006201C10AC805.jpg');
-        formatSelection(_attribute);
-
-        print(getSelectionStyle());
-      }
+    if (textSelectionTap != null) {
+      textSelectionTap(value);
     }
   }
 
