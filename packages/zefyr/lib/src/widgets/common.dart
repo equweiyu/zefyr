@@ -41,6 +41,8 @@ class RawZefyrLine extends StatefulWidget {
 class _RawZefyrLineState extends State<RawZefyrLine> {
   final LayerLink _link = LayerLink();
 
+  int ensureVisibleTag = 0;
+
   @override
   Widget build(BuildContext context) {
     final scope = ZefyrScope.of(context);
@@ -81,6 +83,12 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
   }
 
   void ensureVisible(BuildContext context, ZefyrScope scope) {
+    if (ensureVisibleTag > 3) {
+      return;
+    } else {
+      ensureVisibleTag += 1;
+    }
+
     if (scope.selection.isCollapsed &&
         widget.node.containsOffset(scope.selection.extentOffset)) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
