@@ -148,6 +148,11 @@ class RenderEditableImage extends RenderBox
     return TextPosition(offset: position);
   }
 
+  bool inImage(Offset offset) {
+    return (offset.dx > size.width / 2 - _lastChildSize.width / 2 &&
+        offset.dx < size.width / 2 + _lastChildSize.width / 2);
+  }
+
   @override
   TextRange getWordBoundary(TextPosition position) {
     final start = _node.documentOffset;

@@ -198,9 +198,10 @@ class ZefyrController extends ChangeNotifier {
   }
 
   /// Formats current selection with [attribute].
-  void formatSelection(NotusAttribute attribute) {
-    int index = _selection.start;
-    int length = _selection.end - index;
+  void formatSelection(NotusAttribute attribute, {TextSelection selection}) {
+    final value = selection ?? _selection;
+    int index = value.start;
+    int length = value.end - index;
     formatText(index, length, attribute);
   }
 

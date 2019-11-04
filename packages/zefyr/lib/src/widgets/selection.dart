@@ -285,7 +285,11 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
       baseOffset: word.start,
       extentOffset: word.end,
     );
-    if (_scope.controller.textTap(selection) == false) {
+    bool inImage;
+    if (box is RenderEditableProxyBox && box.child is RenderEditableImage) {
+      inImage = (box.child as RenderEditableImage).inImage(localPoint);
+    }
+    if ((inImage != false) && (_scope.controller.textTap(selection) == false)) {
       _scope.controller.updateSelection(selection, source: ChangeSource.local);
     }
   }

@@ -25,15 +25,17 @@ class _FormEmbeddedScreenState extends State<FormEmbeddedScreen> {
     if (style.contains(NotusAttribute.embed)) {
       EmbedAttribute embed = style.get(NotusAttribute.embed);
       if (embed.type == EmbedType.image) {
-        controller.change(
-            value,
-            NotusAttribute.embed.image(
-                'https://image.xiniujiao.net/5cb8cee206d7051bf88cef29270855f5.jpg'));
+        print('tap image');
+        // controller.change(
+            // value,
+            // NotusAttribute.embed.image(
+            //     'https://image.xiniujiao.net/5cb8cee206d7051bf88cef29270855f5.jpg'));
       }
       return true;
     }
     if (style.contains(NotusAttribute.link)) {
-      controller.formatSelection(NotusAttribute.link.fromString('123123'));
+      // controller.formatSelection(NotusAttribute.link.fromString('123123'));
+      print('tag link');
       return true;
     }
     return false;
