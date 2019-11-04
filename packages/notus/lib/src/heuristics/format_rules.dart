@@ -182,7 +182,9 @@ class FormatEmbedsRule extends FormatRule {
     final isNewlineAfter = target.data.startsWith('\n');
     final isOnEmptyLine = isNewlineBefore && isNewlineAfter;
     if (isOnEmptyLine) {
-      return result..insert(EmbedNode.kPlainTextPlaceholder, embed.toJson());
+      return result
+        ..insert(EmbedNode.kPlainTextPlaceholder, embed.toJson())
+        ..insert('\n');
     }
     // We are on a non-empty line, split it (preserving style if needed)
     // and insert our embed.
@@ -191,9 +193,7 @@ class FormatEmbedsRule extends FormatRule {
       result..insert('\n', lineStyle);
     }
     result..insert(EmbedNode.kPlainTextPlaceholder, embed.toJson());
-    if (!isNewlineAfter) {
-      result..insert('\n');
-    }
+    result..insert('\n');
     result.delete(length);
     return result;
   }

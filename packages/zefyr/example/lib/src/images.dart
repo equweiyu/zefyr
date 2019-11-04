@@ -4,6 +4,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zefyr/zefyr.dart';
@@ -17,6 +18,8 @@ class CustomImageDelegate implements ZefyrImageDelegate<ImageSource> {
     if (key.startsWith('asset://')) {
       final asset = AssetImage(key.replaceFirst('asset://', ''));
       return Image(image: asset);
+    } else if (key.startsWith('http')) {
+      return Image.network(key);
     } else {
       // Otherwise assume this is a file stored locally on user's device.
       final file = File.fromUri(Uri.parse(key));

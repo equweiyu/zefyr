@@ -214,6 +214,15 @@ class ZefyrController extends ChangeNotifier {
         source: ChangeSource.local);
   }
 
+  void change(TextSelection value, EmbedAttribute attribute) {
+    int index = value.start;
+    Delta result = Delta()..retain(index);
+    Delta change = result..retain(1, attribute.toJson());
+    _document.compose(change, ChangeSource.local);
+    updateSelection(TextSelection.collapsed(offset: value.end),
+        source: ChangeSource.local);
+  }
+
   /// Returns style of specified text range.
   ///
   /// If nothing is selected but we've toggled an attribute,

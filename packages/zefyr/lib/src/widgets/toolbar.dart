@@ -238,7 +238,8 @@ class ZefyrToolbarState extends State<ZefyrToolbar>
   }
 
   List<Widget> _buildButtons(BuildContext context, ZefyrScope editor) {
-    return widget.delegate.buildButtons(context, editor);
+    return (widget.delegate ?? _DefaultZefyrToolbarDelegate())
+        .buildButtons(context, editor);
   }
 }
 
@@ -319,8 +320,20 @@ class _DefaultZefyrToolbarDelegate implements ZefyrToolbarDelegate {
         onPressed: () => editor.hideKeyboard(),
       ),
       ZefyrButton.icon(
+        icon: Icons.format_bold,
+        onPressed: () => _toggleAttribute(NotusAttribute.bold, editor),
+      ),
+      ZefyrButton.icon(
+        icon: Icons.format_underlined,
+        onPressed: () => _toggleAttribute(NotusAttribute.underline, editor),
+      ),
+      ZefyrButton.icon(
         icon: Icons.text_format,
-        onPressed: () {},
+        onPressed: () => _toggleAttribute(NotusAttribute.h1, editor),
+      ),
+      ZefyrButton.icon(
+        icon: Icons.text_format,
+        onPressed: () => _toggleAttribute(NotusAttribute.h2, editor),
       ),
       ZefyrButton.icon(
         icon: Icons.photo_library,
@@ -330,6 +343,11 @@ class _DefaultZefyrToolbarDelegate implements ZefyrToolbarDelegate {
         icon: Icons.border_horizontal,
         onPressed: () =>
             _toggleAttribute(NotusAttribute.embed.horizontalRule, editor),
+      ),
+      ZefyrButton.icon(
+        icon: Icons.insert_link,
+        onPressed: () =>
+            editor.insert('string', NotusAttribute.link.fromString('value')),
       ),
     ];
   }
