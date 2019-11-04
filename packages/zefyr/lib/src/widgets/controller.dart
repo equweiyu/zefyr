@@ -205,12 +205,23 @@ class ZefyrController extends ChangeNotifier {
   }
 
   void insert(String string, NotusAttribute attribute) {
-    Delta change = Delta()
-      ..retain(_selection.end)
-      ..insert(string, attribute.toJson());
+    final index = _selection.end;
+    DeltaIterator iter = DeltaIterator(_document.toDelta());
+    final previous = iter.skip(index);
+
+    final hasEmbed = (previous != null &&
+        previous.attributes != null &&
+        previous.attributes.containsKey(NotusAttribute.embed.key));
+    Delta change = Delta()..retain(index);
+    if (hasEmbed) {
+      change..insert('\n');
+    }
+
+    change.insert(string, attribute.toJson());
     _document.compose(change, ChangeSource.local);
     updateSelection(
-        TextSelection.collapsed(offset: _selection.end + string.length),
+        TextSelection.collapsed(
+            offset: _selection.end + string.length + (hasEmbed ? 1 : 0)),
         source: ChangeSource.local);
   }
 
