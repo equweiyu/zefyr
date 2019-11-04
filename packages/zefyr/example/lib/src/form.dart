@@ -19,32 +19,41 @@ class _FormEmbeddedScreenState extends State<FormEmbeddedScreen> {
   ZefyrController _controller;
   final FocusNode _focusNode = FocusNode();
 
-  bool textTap(TextSelection value, ZefyrController controller) {
+  bool _handleTap(TextSelection value, ZefyrController controller) {
     final style =
-        _controller.document.collectStyle(value.start, value.end - value.start);
+        controller.document.collectStyle(value.start, value.end - value.start);
     if (style.contains(NotusAttribute.embed)) {
       EmbedAttribute embed = style.get(NotusAttribute.embed);
       if (embed.type == EmbedType.image) {
         print('tap image');
         // controller.change(
-            // value,
-            // NotusAttribute.embed.image(
-            //     'https://image.xiniujiao.net/5cb8cee206d7051bf88cef29270855f5.jpg'));
+        // value,
+        // NotusAttribute.embed.image(
+        //     'https://image.xiniujiao.net/5cb8cee206d7051bf88cef29270855f5.jpg'));
       }
       return true;
     }
+    return false;
+  }
+
+  bool _handleLongPress(TextSelection value, ZefyrController controller) {
+    final style =
+        controller.document.collectStyle(value.start, value.end - value.start);
     if (style.contains(NotusAttribute.link)) {
       // controller.formatSelection(NotusAttribute.link.fromString('123123'));
       print('tag link');
-      return true;
+      return false;
     }
     return false;
   }
 
   @override
   void initState() {
-    _controller = ZefyrController(NotusDocument(),
-        textSelectionTap: (value) => textTap(value, _controller));
+    _controller = ZefyrController(
+      NotusDocument(),
+      handleTap: (value) => _handleTap(value, _controller),
+      handleLongPress: (value) => _handleLongPress(value, _controller),
+    );
     super.initState();
   }
 
