@@ -53,8 +53,12 @@ abstract class Node extends LinkedListEntry<Node> {
 
   /// Offset in characters of this node in the document.
   int get documentOffset {
-    int parentOffset = (_parent is! RootNode) ? _parent.documentOffset : 0;
-    return parentOffset + this.offset;
+    try {
+      int parentOffset = (_parent is! RootNode) ? _parent.documentOffset : 0;
+      return parentOffset + this.offset;
+    } catch (e) {
+      return 0;
+    }
   }
 
   /// Returns `true` if this node contains character at specified [offset] in

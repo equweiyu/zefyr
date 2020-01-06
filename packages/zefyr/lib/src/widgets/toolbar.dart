@@ -327,12 +327,12 @@ class _DefaultZefyrToolbarDelegate implements ZefyrToolbarDelegate {
         icon: Icons.format_underlined,
         onPressed: () => _toggleAttribute(NotusAttribute.underline, editor),
       ),
-      ZefyrButton.icon(
-        icon: Icons.text_format,
+      ZefyrButton.text(
+        text: 'H1',
         onPressed: () => _toggleAttribute(NotusAttribute.h1, editor),
       ),
-      ZefyrButton.icon(
-        icon: Icons.text_format,
+      ZefyrButton.text(
+        text: 'H2',
         onPressed: () => _toggleAttribute(NotusAttribute.h2, editor),
       ),
       ZefyrButton.icon(

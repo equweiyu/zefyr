@@ -13,7 +13,8 @@ import 'package:zefyr/zefyr.dart';
 /// assets.
 class CustomImageDelegate implements ZefyrImageDelegate<ImageSource> {
   @override
-  Widget buildImage(BuildContext context, String key) {
+  Widget buildImage(BuildContext context, String key, num width, num height,
+      String size, String desc) {
     // We use custom "asset" scheme to distinguish asset images from other files.
     if (key.startsWith('asset://')) {
       final asset = AssetImage(key.replaceFirst('asset://', ''));
