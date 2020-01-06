@@ -21,6 +21,7 @@ import 'render_context.dart';
 import 'scope.dart';
 import 'selection.dart';
 import 'theme.dart';
+import 'unknow.dart';
 
 /// Core widget responsible for editing Zefyr documents.
 ///
@@ -35,6 +36,7 @@ class ZefyrEditableText extends StatefulWidget {
     @required this.controller,
     @required this.focusNode,
     @required this.imageDelegate,
+    @required this.unknowDelegate,
     this.selectionControls,
     this.autofocus = true,
     this.mode = ZefyrMode.edit,
@@ -51,6 +53,7 @@ class ZefyrEditableText extends StatefulWidget {
   /// Controls whether this editor has keyboard focus.
   final FocusNode focusNode;
   final ZefyrImageDelegate imageDelegate;
+  final ZefyrUnknowDelegate unknowDelegate;
 
   /// Whether this text field should focus itself if nothing else is already
   /// focused.
@@ -274,7 +277,7 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText>
     _renderContext.removeListener(_handleRenderContextChange);
     widget.controller.removeListener(_handleLocalValueChange);
     _focusNode.removeListener(_handleFocusChange);
-    _input.closeConnection();
+    _input.connectionClosed();
     _cursorTimer.stop();
   }
 

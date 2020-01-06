@@ -56,6 +56,7 @@ class ZefyrThemeData {
   final TextStyle italicStyle;
   final TextStyle underlineStyle;
   final TextStyle linkStyle;
+  final TextStyle gameStyle;
   final StyleTheme paragraphTheme;
   final HeadingTheme headingTheme;
   final BlockTheme blockTheme;
@@ -104,6 +105,7 @@ class ZefyrThemeData {
     this.italicStyle,
     this.underlineStyle,
     this.linkStyle,
+    this.gameStyle,
     this.paragraphTheme,
     this.headingTheme,
     this.blockTheme,
@@ -119,6 +121,7 @@ class ZefyrThemeData {
     TextStyle italicStyle,
     TextStyle underlineStyle,
     TextStyle linkStyle,
+    TextStyle gameStyle,
     StyleTheme paragraphTheme,
     HeadingTheme headingTheme,
     BlockTheme blockTheme,
@@ -132,6 +135,7 @@ class ZefyrThemeData {
       italicStyle: italicStyle ?? this.italicStyle,
       underlineStyle: underlineStyle ?? this.underlineStyle,
       linkStyle: linkStyle ?? this.linkStyle,
+      gameStyle: gameStyle ?? this.gameStyle,
       paragraphTheme: paragraphTheme ?? this.paragraphTheme,
       headingTheme: headingTheme ?? this.headingTheme,
       blockTheme: blockTheme ?? this.blockTheme,
@@ -148,6 +152,7 @@ class ZefyrThemeData {
       italicStyle: other.italicStyle,
       underlineStyle: other.underlineStyle,
       linkStyle: other.linkStyle,
+      gameStyle: other.gameStyle,
       paragraphTheme: other.paragraphTheme,
       headingTheme: other.headingTheme,
       blockTheme: other.blockTheme,

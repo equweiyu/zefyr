@@ -12,6 +12,7 @@ import 'image.dart';
 import 'rich_text.dart';
 import 'scope.dart';
 import 'theme.dart';
+import 'unknow.dart';
 
 /// Raw widget representing a single line of rich text document in Zefyr editor.
 ///
@@ -149,6 +150,9 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
     if (style.contains(NotusAttribute.link)) {
       result = result.merge(theme.linkStyle);
     }
+    if (style.contains(NotusAttribute.game)) {
+      result = result.merge(theme.gameStyle);
+    }
     return result;
   }
 
@@ -164,7 +168,7 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
       //TODO:
       return ZefyrImage(node: node, delegate: scope.imageDelegate);
     } else {
-      throw UnimplementedError('Unimplemented embed type ${embed.type}');
+      return Unknow(node: node, delegate: scope.unknowDelegate);
     }
   }
 }

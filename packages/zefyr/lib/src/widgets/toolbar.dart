@@ -336,10 +336,6 @@ class _DefaultZefyrToolbarDelegate implements ZefyrToolbarDelegate {
         onPressed: () => _toggleAttribute(NotusAttribute.h2, editor),
       ),
       ZefyrButton.icon(
-        icon: Icons.photo_library,
-        onPressed: () => _pickFromGallery(editor),
-      ),
-      ZefyrButton.icon(
         icon: Icons.border_horizontal,
         onPressed: () =>
             _toggleAttribute(NotusAttribute.embed.horizontalRule, editor),
@@ -358,15 +354,6 @@ class _DefaultZefyrToolbarDelegate implements ZefyrToolbarDelegate {
       editor.formatSelection(attribute.unset);
     } else {
       editor.formatSelection(attribute);
-    }
-  }
-
-  void _pickFromGallery(ZefyrScope editor) async {
-    final images = await editor.imageDelegate.pickFromGallery();
-    for (var image in images) {
-      if (image != null) {
-        editor.formatSelection(NotusAttribute.embed.image(image));
-      }
     }
   }
 }

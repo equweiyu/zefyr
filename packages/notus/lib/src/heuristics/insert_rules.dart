@@ -4,6 +4,7 @@
 
 import 'package:quill_delta/quill_delta.dart';
 import 'package:notus/notus.dart';
+import 'dart:math' as math;
 
 /// A heuristic rule for insert operations.
 abstract class InsertRule {
@@ -145,7 +146,24 @@ class PreserveInlineStylesRule extends InsertRule {
     if (text.contains('\n')) return null;
 
     DeltaIterator iter = DeltaIterator(document);
-    final previous = iter.skip(index);
+
+    int skipped = 0;
+    Operation op;
+    int _index = 0;
+
+    while (skipped < index && iter.hasNext) {
+      int opLength = iter.peekLength();
+      int skip = math.min(index - skipped, opLength);
+      op = iter.next(skip);
+      if (skip == opLength) {
+        _index += 1;
+        skipped += op.length;
+      } else {
+        break;
+      }
+    }
+
+    final previous = op;
     // If there is a line-break in previous chunk, there should be no inline
     // styles. Also if there is no previous operation we are at the beginning
     // of the document so no styles to inherit from.
@@ -154,6 +172,17 @@ class PreserveInlineStylesRule extends InsertRule {
     final attributes = previous.attributes;
     final hasLink =
         (attributes != null && attributes.containsKey(NotusAttribute.link.key));
+    final hasGame =
+        (attributes != null && attributes.containsKey(NotusAttribute.game.key));
+    if (hasGame) {
+      if (_index > 0 && document.elementAt(_index - 1).data == previous.data) {
+        return Delta()
+          ..retain(index)
+          ..insert(text);
+      } else {
+        return Delta();
+      }
+    }
     if (!hasLink) {
       return Delta()
         ..retain(index)

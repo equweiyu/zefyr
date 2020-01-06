@@ -4,6 +4,7 @@
 
 import 'package:quill_delta/quill_delta.dart';
 import 'package:notus/notus.dart';
+import 'dart:math' as math;
 
 /// A heuristic rule for delete operations.
 abstract class DeleteRule {
@@ -22,6 +23,7 @@ class CatchAllDeleteRule extends DeleteRule {
 
   @override
   Delta apply(Delta document, int index, int length) {
+    
     return Delta()
       ..retain(index)
       ..delete(length);
@@ -129,5 +131,41 @@ class EnsureEmbedLineRule extends DeleteRule {
     }
 
     return null; // fallback
+  }
+}
+
+class BlockDeleteRule extends DeleteRule {
+  const BlockDeleteRule();
+  @override
+  Delta apply(Delta document, int index, int length) {
+    DeltaIterator iter = DeltaIterator(document);
+
+    int skipped = 0;
+    Operation op;
+    int _index = 0;
+
+    while (skipped < index && iter.hasNext) {
+      int opLength = iter.peekLength();
+      int skip = math.min(index - skipped, opLength);
+      op = iter.next(skip);
+      if (skip == opLength) {
+        _index += 1;
+        skipped += op.length;
+      } else {
+        break;
+      }
+    }
+
+    final target = iter.next(length);
+    if (target.attributes != null &&
+        (target.attributes.containsKey(NotusAttribute.game.key) ||
+            target.attributes.containsKey(NotusAttribute.link.key))) {
+      return Delta()
+        ..retain(skipped)
+        ..delete(document.elementAt(_index).data.length);
+    }
+    return Delta()
+      ..retain(index)
+      ..delete(length);
   }
 }

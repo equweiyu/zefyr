@@ -1,83 +1,65 @@
 // Copyright (c) 2018, the Zefyr project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-import 'dart:async';
-import 'dart:math' as math;
 import 'dart:ui' as ui;
+import 'dart:math' as math;
 
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
 import 'package:notus/notus.dart';
 
 import 'editable_box.dart';
 
-/// Provides interface for embedding images into Zefyr editor.
-// TODO: allow configuring image sources and related toolbar buttons.
-@experimental
-abstract class ZefyrImageDelegate<S> {
-  /// Builds image widget for specified image [key].
-  ///
-  /// The [key] argument contains value which was previously returned from
-  /// [pickImage] method.
-  Widget buildImage(BuildContext context, String source, num width,
-      num height, String size, String desc);
+abstract class ZefyrUnknowDelegate<S> {
+  Widget buildUnknow(BuildContext context, Map<String, dynamic> value);
 }
 
-class ZefyrImage extends StatefulWidget {
-  const ZefyrImage({Key key, @required this.node, @required this.delegate})
+class Unknow extends StatefulWidget {
+  const Unknow({Key key, @required this.node, @required this.delegate})
       : super(key: key);
-
-  final EmbedNode node;
-  final ZefyrImageDelegate delegate;
-
   @override
-  _ZefyrImageState createState() => _ZefyrImageState();
+  _UnknowState createState() => _UnknowState();
+  final EmbedNode node;
+  final ZefyrUnknowDelegate delegate;
 }
 
-class _ZefyrImageState extends State<ZefyrImage> {
+class _UnknowState extends State<Unknow> {
   @override
   Widget build(BuildContext context) {
-    final value = widget.node.style.get(NotusAttribute.embed).value;
-    final souce = value['source'];
-    final width = value['width'];
-    final height = value['height'];
-    final size = value['size'];
-    final desc = value['desc'];
-    final image =
-        widget.delegate.buildImage(context, souce, width, height, size, desc);
-    return _EditableImage(
-      child: image,
+    EmbedAttribute attribute = widget.node.style.get(NotusAttribute.embed);
+    return _EditableUnknow(
+      child: widget.delegate.buildUnknow(context, attribute.value),
       node: widget.node,
     );
   }
 }
 
-class _EditableImage extends SingleChildRenderObjectWidget {
-  _EditableImage({@required Widget child, @required this.node})
+class _EditableUnknow extends SingleChildRenderObjectWidget {
+  _EditableUnknow({@required Widget child, @required this.node})
       : assert(node != null),
         super(child: child);
 
   final EmbedNode node;
 
   @override
-  RenderEditableImage createRenderObject(BuildContext context) {
-    return RenderEditableImage(node: node);
+  RenderEditableUnknow createRenderObject(BuildContext context) {
+    return RenderEditableUnknow(node: node);
   }
 
   @override
   void updateRenderObject(
-      BuildContext context, RenderEditableImage renderObject) {
+      BuildContext context, RenderEditableUnknow renderObject) {
     renderObject..node = node;
   }
 }
 
-class RenderEditableImage extends RenderBox
+class RenderEditableUnknow extends RenderBox
     with RenderObjectWithChildMixin<RenderBox>, RenderProxyBoxMixin<RenderBox>
     implements RenderEditableBox {
   static const kPaddingBottom = 24.0;
 
-  RenderEditableImage({
+  RenderEditableUnknow({
     RenderImage child,
     @required EmbedNode node,
   }) : _node = node {
@@ -91,7 +73,6 @@ class RenderEditableImage extends RenderBox
     _node = value;
   }
 
-  // TODO: Customize caret height offset instead of adjusting here by 2px.
   @override
   double get preferredLineHeight => size.height - kPaddingBottom + 2.0;
 
@@ -138,11 +119,6 @@ class RenderEditableImage extends RenderBox
       position++;
     }
     return TextPosition(offset: position);
-  }
-
-  bool inImage(Offset offset) {
-    return (offset.dx > size.width / 2 - _lastChildSize.width / 2 &&
-        offset.dx < size.width / 2 + _lastChildSize.width / 2);
   }
 
   @override
@@ -207,16 +183,9 @@ class RenderEditableImage extends RenderBox
   @override
   void performLayout() {
     assert(constraints.hasBoundedWidth);
+
     if (child != null) {
-      // Make constraints use 16:9 aspect ratio.
-      final width = constraints.maxWidth - kHorizontalPadding * 2;
-      final childConstraints = constraints.copyWith(
-        minWidth: 0.0,
-        maxWidth: width,
-        minHeight: 0.0,
-        maxHeight: (width * 9 / 16).floorToDouble(),
-      );
-      child.layout(childConstraints, parentUsesSize: true);
+      child.layout(constraints, parentUsesSize: true);
       _lastChildSize = child.size;
       size = Size(constraints.maxWidth, _lastChildSize.height + kPaddingBottom);
     } else {

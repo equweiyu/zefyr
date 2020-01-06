@@ -13,6 +13,7 @@ import 'scaffold.dart';
 import 'scope.dart';
 import 'theme.dart';
 import 'toolbar.dart';
+import 'unknow.dart';
 
 /// Widget for editing Zefyr documents.
 class ZefyrEditor extends StatefulWidget {
@@ -25,6 +26,7 @@ class ZefyrEditor extends StatefulWidget {
     this.padding = const EdgeInsets.symmetric(horizontal: 16.0),
     this.toolbarDelegate,
     this.imageDelegate,
+    this.unknowDeleage,
     this.selectionControls,
     this.physics,
   })  : assert(mode != null),
@@ -58,6 +60,8 @@ class ZefyrEditor extends StatefulWidget {
   /// This delegate is required if embedding images is allowed.
   final ZefyrImageDelegate imageDelegate;
 
+  final ZefyrUnknowDelegate unknowDeleage;
+
   /// Optional delegate for building the text selection handles and toolbar.
   ///
   /// If not provided then platform-specific implementation is used by default.
@@ -75,6 +79,7 @@ class ZefyrEditor extends StatefulWidget {
 
 class _ZefyrEditorState extends State<ZefyrEditor> {
   ZefyrImageDelegate _imageDelegate;
+  ZefyrUnknowDelegate _unknowDelegate;
   ZefyrScope _scope;
   ZefyrThemeData _themeData;
   GlobalKey<ZefyrToolbarState> _toolbarKey;
@@ -122,6 +127,7 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
   void initState() {
     super.initState();
     _imageDelegate = widget.imageDelegate;
+    _unknowDelegate = widget.unknowDeleage;
   }
 
   @override
@@ -133,6 +139,10 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
     if (widget.imageDelegate != oldWidget.imageDelegate) {
       _imageDelegate = widget.imageDelegate;
       _scope.imageDelegate = _imageDelegate;
+    }
+    if (widget.unknowDeleage != oldWidget.unknowDeleage) {
+      _unknowDelegate = widget.unknowDeleage;
+      _scope.unknowDelegate = _unknowDelegate;
     }
   }
 
@@ -149,6 +159,7 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
       _scope = ZefyrScope.editable(
         mode: widget.mode,
         imageDelegate: _imageDelegate,
+        unknowDelegate: _unknowDelegate,
         controller: widget.controller,
         focusNode: widget.focusNode,
         focusScope: FocusScope.of(context),
@@ -182,6 +193,7 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
       controller: _scope.controller,
       focusNode: _scope.focusNode,
       imageDelegate: _scope.imageDelegate,
+      unknowDelegate: _scope.unknowDelegate,
       selectionControls: widget.selectionControls,
       autofocus: widget.autofocus,
       mode: widget.mode,

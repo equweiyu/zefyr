@@ -216,6 +216,36 @@ class ZefyrController extends ChangeNotifier {
     formatText(index, length, attribute);
   }
 
+  void delete(bool Function(String data, NotusStyle style) test) {
+    DeltaIterator iter = DeltaIterator(_document.toDelta());
+    int s = 0;
+    while (iter.hasNext) {
+      int opLength = iter.peekLength();
+      Operation op = iter.next(opLength);
+      if (test(op.data, NotusStyle.fromJson(op.attributes))) {
+        replaceText(s, op.data.length, '', selection: _selection);
+        iter = DeltaIterator(_document.toDelta());
+        s = 0;
+        continue;
+      }
+      s += op.data.length;
+    }
+  }
+
+  void deleteFrist(bool Function(String data, NotusStyle style) test) {
+    DeltaIterator iter = DeltaIterator(_document.toDelta());
+    int s = 0;
+    while (iter.hasNext) {
+      int opLength = iter.peekLength();
+      Operation op = iter.next(opLength);
+      if (test(op.data, NotusStyle.fromJson(op.attributes))) {
+        replaceText(s, op.data.length, '', selection: _selection);
+        return;
+      }
+      s += op.data.length;
+    }
+  }
+
   void insert(String string, NotusAttribute attribute) {
     final index = _selection.end;
     DeltaIterator iter = DeltaIterator(_document.toDelta());

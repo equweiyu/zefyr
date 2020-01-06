@@ -36,5 +36,20 @@ int getPositionDelta(Delta user, Delta actual) {
       // TODO: this likely needs to cover more edge cases.
     }
   }
+  if (user.length > 0 &&
+      actual.length > 0 &&
+      user.toList().last.isDelete &&
+      actual.toList().last.isDelete) {
+    for (var item in user.toList()) {
+      if (item.isRetain) {
+        diff -= item.length;
+      }
+    }
+    for (var item in actual.toList()) {
+      if (item.isRetain) {
+        diff += item.length;
+      }
+    }
+  }
   return diff;
 }

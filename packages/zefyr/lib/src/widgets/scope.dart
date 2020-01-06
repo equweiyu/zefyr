@@ -9,6 +9,7 @@ import 'image.dart';
 import 'mode.dart';
 import 'render_context.dart';
 import 'view.dart';
+import 'unknow.dart';
 
 /// Provides access to shared state of [ZefyrEditor] or [ZefyrView].
 ///
@@ -25,10 +26,12 @@ class ZefyrScope extends ChangeNotifier {
   /// Creates a view-only scope.
   ///
   /// Normally used in [ZefyrView].
-  ZefyrScope.view({ZefyrImageDelegate imageDelegate})
+  ZefyrScope.view(
+      {ZefyrImageDelegate imageDelegate, ZefyrUnknowDelegate unknowDelegate})
       : isEditable = false,
         _mode = ZefyrMode.view,
-        _imageDelegate = imageDelegate;
+        _imageDelegate = imageDelegate,
+        _unknowDelegate = unknowDelegate;
 
   /// Creates editable scope.
   ///
@@ -39,6 +42,7 @@ class ZefyrScope extends ChangeNotifier {
     @required FocusNode focusNode,
     @required FocusScopeNode focusScope,
     ZefyrImageDelegate imageDelegate,
+    ZefyrUnknowDelegate unknowDelegate,
   })  : assert(mode != null),
         assert(controller != null),
         assert(focusNode != null),
@@ -47,6 +51,7 @@ class ZefyrScope extends ChangeNotifier {
         _mode = mode,
         _controller = controller,
         _imageDelegate = imageDelegate,
+        _unknowDelegate = unknowDelegate,
         _focusNode = focusNode,
         _focusScope = focusScope,
         _cursorTimer = CursorTimer(),
@@ -68,6 +73,15 @@ class ZefyrScope extends ChangeNotifier {
   set imageDelegate(ZefyrImageDelegate value) {
     if (_imageDelegate != value) {
       _imageDelegate = value;
+      notifyListeners();
+    }
+  }
+
+  ZefyrUnknowDelegate _unknowDelegate;
+  ZefyrUnknowDelegate get unknowDelegate => _unknowDelegate;
+  set unknowDelegate(ZefyrUnknowDelegate value) {
+    if (_unknowDelegate != value) {
+      _unknowDelegate = value;
       notifyListeners();
     }
   }

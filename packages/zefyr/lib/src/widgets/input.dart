@@ -28,7 +28,7 @@ class InputConnectionController implements TextInputClient {
     if (focusNode.hasFocus && focusNode.consumeKeyboardToken()) {
       openConnection(value);
     } else if (!focusNode.hasFocus) {
-      closeConnection();
+      connectionClosed();
     }
   }
 
@@ -51,7 +51,8 @@ class InputConnectionController implements TextInputClient {
   }
 
   /// Closes input connection if it's currently open. Otherwise does nothing.
-  void closeConnection() {
+  @override
+  void connectionClosed() {
     if (hasConnection) {
       _textInputConnection.close();
       _textInputConnection = null;

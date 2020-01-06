@@ -106,6 +106,7 @@ class NotusDocument {
     text = _sanitizeString(text);
     if (text.isEmpty) return Delta();
     final change = _heuristics.applyInsertRules(this, index, text);
+    if (change.isEmpty) return change;
     compose(change, ChangeSource.local);
     return change;
   }
