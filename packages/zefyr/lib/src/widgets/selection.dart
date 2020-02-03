@@ -266,18 +266,9 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
     } else {
       _didCaretTap = true;
     }
-    if (box is RenderEditableProxyBox && box.child is RenderEditableImage) {
-      bool inImage = (box.child as RenderEditableImage).inImage(localPoint);
-      if (inImage) {
-        if ((_scope.controller.handleTap(selection) == false)) {
-          _scope.controller
-              .updateSelection(selection, source: ChangeSource.local);
-        }
-      } else {
-        _scope.controller
-            .updateSelection(selection, source: ChangeSource.local);
-      }
-    } else if ((_scope.controller.handleTap(selection) == false)) {
+
+    if (_scope.controller.delegate?.handleTap(selection, box, localPoint) ==
+        false) {
       _scope.controller.updateSelection(selection, source: ChangeSource.local);
     }
   }
@@ -298,18 +289,9 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
       baseOffset: word.start,
       extentOffset: word.end,
     );
-    if (box is RenderEditableProxyBox && box.child is RenderEditableImage) {
-      bool inImage = (box.child as RenderEditableImage).inImage(localPoint);
-      if (inImage) {
-        if ((_scope.controller.handleLongPress(selection) == false)) {
-          _scope.controller
-              .updateSelection(selection, source: ChangeSource.local);
-        }
-      } else {
-        _scope.controller
-            .updateSelection(selection, source: ChangeSource.local);
-      }
-    } else if ((_scope.controller.handleLongPress(selection) == false)) {
+    if (_scope.controller.delegate
+            ?.handleLongPress(selection, box, localPoint) ==
+        false) {
       _scope.controller.updateSelection(selection, source: ChangeSource.local);
     }
   }

@@ -37,6 +37,7 @@ class ZefyrEditableText extends StatefulWidget {
     @required this.focusNode,
     @required this.imageDelegate,
     @required this.unknowDelegate,
+    this.scrollController,
     this.selectionControls,
     this.autofocus = true,
     this.mode = ZefyrMode.edit,
@@ -54,6 +55,7 @@ class ZefyrEditableText extends StatefulWidget {
   final FocusNode focusNode;
   final ZefyrImageDelegate imageDelegate;
   final ZefyrUnknowDelegate unknowDelegate;
+  final ScrollController scrollController;
 
   /// Whether this text field should focus itself if nothing else is already
   /// focused.
@@ -147,7 +149,7 @@ class _ZefyrEditableTextState extends State<ZefyrEditableText>
 
     body = SingleChildScrollView(
       physics: widget.physics,
-      controller: _scrollController,
+      controller: widget.scrollController ?? _scrollController,
       child: body,
     );
 

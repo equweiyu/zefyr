@@ -1,7 +1,6 @@
 // Copyright (c) 2018, the Zefyr project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
@@ -20,8 +19,8 @@ abstract class ZefyrImageDelegate<S> {
   ///
   /// The [key] argument contains value which was previously returned from
   /// [pickImage] method.
-  Widget buildImage(BuildContext context, String source, num width,
-      num height, String size, String desc);
+  Widget buildImage(BuildContext context, String source, num width, num height,
+      String size, String desc);
 }
 
 class ZefyrImage extends StatefulWidget {
@@ -208,13 +207,9 @@ class RenderEditableImage extends RenderBox
   void performLayout() {
     assert(constraints.hasBoundedWidth);
     if (child != null) {
-      // Make constraints use 16:9 aspect ratio.
-      final width = constraints.maxWidth - kHorizontalPadding * 2;
       final childConstraints = constraints.copyWith(
         minWidth: 0.0,
-        maxWidth: width,
         minHeight: 0.0,
-        maxHeight: (width * 9 / 16).floorToDouble(),
       );
       child.layout(childConstraints, parentUsesSize: true);
       _lastChildSize = child.size;

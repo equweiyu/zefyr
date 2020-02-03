@@ -8,6 +8,8 @@ import 'package:notus/notus.dart';
 import 'package:quill_delta/quill_delta.dart';
 import 'package:zefyr/util.dart';
 
+import 'editable_box.dart';
+
 const TextSelection _kZeroSelection = TextSelection.collapsed(
   offset: 0,
   affinity: TextAffinity.upstream,
@@ -25,19 +27,24 @@ enum FocusOwner {
   none,
 }
 
+abstract class ZefyrControllerDelegate {
+  /// 返回值 是否替换原来的事件
+  bool handleLongPress(
+      TextSelection value, RenderEditableProxyBox box, Offset offset);
+
+  /// 返回值 是否替换原来的事件
+  bool handleTap(
+      TextSelection value, RenderEditableProxyBox box, Offset offset);
+}
+
 /// Controls instance of [ZefyrEditor].
 class ZefyrController extends ChangeNotifier {
   ZefyrController(
     NotusDocument document, {
-    bool Function(TextSelection) handleLongPress,
-    bool Function(TextSelection) handleTap,
+    this.delegate,
   })  : assert(document != null),
-        _document = document,
-        _handleTap = handleTap,
-        _handleLongPress = handleLongPress;
-
-  bool Function(TextSelection) _handleLongPress;
-  bool Function(TextSelection) _handleTap;
+        _document = document;
+  final ZefyrControllerDelegate delegate;
 
   /// Zefyr document managed by this controller.
   NotusDocument get document => _document;
@@ -65,20 +72,6 @@ class ZefyrController extends ChangeNotifier {
       {ChangeSource source = ChangeSource.remote}) {
     _updateSelectionSilent(value, source: source);
     notifyListeners();
-  }
-
-  bool handleLongPress(TextSelection value) {
-    if (_handleLongPress != null) {
-      return _handleLongPress(value);
-    }
-    return false;
-  }
-
-  bool handleTap(TextSelection value) {
-    if (_handleTap != null) {
-      return _handleTap(value);
-    }
-    return false;
   }
 
   // Updates selection without triggering notifications to listeners.
@@ -269,8 +262,9 @@ class ZefyrController extends ChangeNotifier {
 
   void change(TextSelection value, EmbedAttribute attribute) {
     int index = value.start;
+    int length = value.end - value.start;
     Delta result = Delta()..retain(index);
-    Delta change = result..retain(1, attribute.toJson());
+    Delta change = result..retain(length, attribute.toJson());
     _document.compose(change, ChangeSource.local);
     updateSelection(TextSelection.collapsed(offset: value.end),
         source: ChangeSource.local);

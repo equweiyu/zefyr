@@ -29,3 +29,4 @@ export 'src/widgets/theme.dart';
 export 'src/widgets/toolbar.dart';
 export 'src/widgets/unknow.dart';
 export 'src/widgets/view.dart';
+export 'src/widgets/editable_box.dart';
