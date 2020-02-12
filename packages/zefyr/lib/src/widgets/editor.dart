@@ -4,6 +4,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:zefyr/zefyr.dart';
 
 import 'controller.dart';
 import 'editable_text.dart';
@@ -26,10 +27,11 @@ class ZefyrEditor extends StatefulWidget {
     this.padding = const EdgeInsets.symmetric(horizontal: 16.0),
     this.toolbarDelegate,
     this.imageDelegate,
-    this.unknowDeleage,
+    this.unknowDelegate,
+    this.textDelegate,
     this.scrollController,
     this.selectionControls,
-    this.physics,
+    this.physics, 
   })  : assert(mode != null),
         assert(controller != null),
         assert(focusNode != null),
@@ -63,7 +65,9 @@ class ZefyrEditor extends StatefulWidget {
   /// This delegate is required if embedding images is allowed.
   final ZefyrImageDelegate imageDelegate;
 
-  final ZefyrUnknowDelegate unknowDeleage;
+  final ZefyrUnknowDelegate unknowDelegate;
+
+  final ZefyrTextDelegate textDelegate;
 
   /// Optional delegate for building the text selection handles and toolbar.
   ///
@@ -83,6 +87,7 @@ class ZefyrEditor extends StatefulWidget {
 class _ZefyrEditorState extends State<ZefyrEditor> {
   ZefyrImageDelegate _imageDelegate;
   ZefyrUnknowDelegate _unknowDelegate;
+  ZefyrTextDelegate _textDelegate;
   ZefyrScope _scope;
   ZefyrThemeData _themeData;
   GlobalKey<ZefyrToolbarState> _toolbarKey;
@@ -130,7 +135,8 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
   void initState() {
     super.initState();
     _imageDelegate = widget.imageDelegate;
-    _unknowDelegate = widget.unknowDeleage;
+    _unknowDelegate = widget.unknowDelegate;
+    _textDelegate = widget.textDelegate;
   }
 
   @override
@@ -143,9 +149,13 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
       _imageDelegate = widget.imageDelegate;
       _scope.imageDelegate = _imageDelegate;
     }
-    if (widget.unknowDeleage != oldWidget.unknowDeleage) {
-      _unknowDelegate = widget.unknowDeleage;
+    if (widget.unknowDelegate != oldWidget.unknowDelegate) {
+      _unknowDelegate = widget.unknowDelegate;
       _scope.unknowDelegate = _unknowDelegate;
+    }
+    if (widget.textDelegate != oldWidget.textDelegate) {
+      _textDelegate = widget.textDelegate;
+      _scope.textDelegate = _textDelegate;
     }
   }
 
@@ -163,6 +173,7 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
         mode: widget.mode,
         imageDelegate: _imageDelegate,
         unknowDelegate: _unknowDelegate,
+        textDelegate: _textDelegate,
         controller: widget.controller,
         focusNode: widget.focusNode,
         focusScope: FocusScope.of(context),
@@ -197,6 +208,7 @@ class _ZefyrEditorState extends State<ZefyrEditor> {
       focusNode: _scope.focusNode,
       imageDelegate: _scope.imageDelegate,
       unknowDelegate: _scope.unknowDelegate,
+      textDelegate: _scope.textDelegate,
       scrollController: widget.scrollController,
       selectionControls: widget.selectionControls,
       autofocus: widget.autofocus,

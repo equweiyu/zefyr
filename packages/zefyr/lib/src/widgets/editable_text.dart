@@ -37,6 +37,7 @@ class ZefyrEditableText extends StatefulWidget {
     @required this.focusNode,
     @required this.imageDelegate,
     @required this.unknowDelegate,
+    @required this.textDelegate,
     this.scrollController,
     this.selectionControls,
     this.autofocus = true,
@@ -55,6 +56,7 @@ class ZefyrEditableText extends StatefulWidget {
   final FocusNode focusNode;
   final ZefyrImageDelegate imageDelegate;
   final ZefyrUnknowDelegate unknowDelegate;
+  final ZefyrTextDelegate textDelegate;
   final ScrollController scrollController;
 
   /// Whether this text field should focus itself if nothing else is already

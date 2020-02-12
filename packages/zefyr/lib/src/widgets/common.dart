@@ -60,7 +60,7 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
       assert(widget.style != null);
       content = ZefyrRichText(
         node: widget.node,
-        text: buildText(context),
+        text: buildText(context, scope),
       );
     }
 
@@ -118,22 +118,28 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
     }
   }
 
-  TextSpan buildText(BuildContext context) {
+  TextSpan buildText(BuildContext context, ZefyrScope scope) {
     final theme = ZefyrTheme.of(context);
-    final List<TextSpan> children = widget.node.children
-        .map((node) => _segmentToTextSpan(node, theme))
+    final List<InlineSpan> children = widget.node.children
+        .map((node) => _segmentToTextSpan(node, theme, scope))
         .toList(growable: false);
     return TextSpan(style: widget.style, children: children);
   }
 
-  TextSpan _segmentToTextSpan(Node node, ZefyrThemeData theme) {
+  InlineSpan _segmentToTextSpan(
+      Node node, ZefyrThemeData theme, ZefyrScope scope) {
     final TextNode segment = node;
     final attrs = segment.style;
 
-    return TextSpan(
-      text: segment.value,
-      style: _getTextStyle(attrs, theme),
-    );
+    if (scope.textDelegate != null) {
+      return scope.textDelegate.buildText(
+          context, segment.value, attrs, _getTextStyle(attrs, theme));
+    } else {
+      return TextSpan(
+        text: segment.value,
+        style: _getTextStyle(attrs, theme),
+      );
+    }
   }
 
   TextStyle _getTextStyle(NotusStyle style, ZefyrThemeData theme) {
@@ -149,9 +155,6 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
     }
     if (style.contains(NotusAttribute.link)) {
       result = result.merge(theme.linkStyle);
-    }
-    if (style.contains(NotusAttribute.game)) {
-      result = result.merge(theme.gameStyle);
     }
     return result;
   }
@@ -171,4 +174,9 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
       return Unknow(node: node, delegate: scope.unknowDelegate);
     }
   }
+}
+
+abstract class ZefyrTextDelegate {
+  InlineSpan buildText(BuildContext context, String text, NotusStyle notusStyle,
+      TextStyle textStyle);
 }

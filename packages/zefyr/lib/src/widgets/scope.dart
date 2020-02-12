@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:notus/notus.dart';
 
+import 'common.dart';
 import 'controller.dart';
 import 'cursor_timer.dart';
 import 'editor.dart';
@@ -27,11 +28,12 @@ class ZefyrScope extends ChangeNotifier {
   ///
   /// Normally used in [ZefyrView].
   ZefyrScope.view(
-      {ZefyrImageDelegate imageDelegate, ZefyrUnknowDelegate unknowDelegate})
+      {ZefyrImageDelegate imageDelegate, ZefyrUnknowDelegate unknowDelegate, ZefyrTextDelegate textDelegate})
       : isEditable = false,
         _mode = ZefyrMode.view,
         _imageDelegate = imageDelegate,
-        _unknowDelegate = unknowDelegate;
+        _unknowDelegate = unknowDelegate,
+        _textDelegate = textDelegate;
 
   /// Creates editable scope.
   ///
@@ -43,6 +45,7 @@ class ZefyrScope extends ChangeNotifier {
     @required FocusScopeNode focusScope,
     ZefyrImageDelegate imageDelegate,
     ZefyrUnknowDelegate unknowDelegate,
+    ZefyrTextDelegate textDelegate,
   })  : assert(mode != null),
         assert(controller != null),
         assert(focusNode != null),
@@ -52,6 +55,7 @@ class ZefyrScope extends ChangeNotifier {
         _controller = controller,
         _imageDelegate = imageDelegate,
         _unknowDelegate = unknowDelegate,
+        _textDelegate = textDelegate,
         _focusNode = focusNode,
         _focusScope = focusScope,
         _cursorTimer = CursorTimer(),
@@ -82,6 +86,15 @@ class ZefyrScope extends ChangeNotifier {
   set unknowDelegate(ZefyrUnknowDelegate value) {
     if (_unknowDelegate != value) {
       _unknowDelegate = value;
+      notifyListeners();
+    }
+  }
+
+ ZefyrTextDelegate _textDelegate;
+  ZefyrTextDelegate get textDelegate => _textDelegate;
+  set textDelegate(ZefyrTextDelegate value) {
+    if (_textDelegate != value) {
+      _textDelegate = value;
       notifyListeners();
     }
   }
