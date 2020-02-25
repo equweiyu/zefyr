@@ -267,8 +267,8 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
       _didCaretTap = true;
     }
 
-    if (_scope.controller.delegate?.handleTap(selection, box, localPoint) ==
-        false) {
+    if (_scope.controller.delegate?.handleTap(selection, box, localPoint) !=
+        true) {
       _scope.controller.updateSelection(selection, source: ChangeSource.local);
     }
   }
@@ -290,8 +290,8 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
       extentOffset: word.end,
     );
     if (_scope.controller.delegate
-            ?.handleLongPress(selection, box, localPoint) ==
-        false) {
+            ?.handleLongPress(selection, box, localPoint) !=
+        true) {
       _scope.controller.updateSelection(selection, source: ChangeSource.local);
     }
   }

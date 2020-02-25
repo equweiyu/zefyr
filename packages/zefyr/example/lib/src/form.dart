@@ -51,8 +51,6 @@ class _FormEmbeddedScreenState extends State<FormEmbeddedScreen> {
   void initState() {
     _controller = ZefyrController(
       NotusDocument(),
-      handleTap: (value) => _handleTap(value, _controller),
-      handleLongPress: (value) => _handleLongPress(value, _controller),
     );
     super.initState();
   }
@@ -105,7 +103,6 @@ class _FormEmbeddedScreenState extends State<FormEmbeddedScreen> {
         disabledIconColor: Colors.grey.shade500,
       ),
     );
-
     return ZefyrTheme(
       data: theme,
       child: ZefyrField(
