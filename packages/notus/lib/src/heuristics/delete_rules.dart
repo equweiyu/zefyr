@@ -23,7 +23,6 @@ class CatchAllDeleteRule extends DeleteRule {
 
   @override
   Delta apply(Delta document, int index, int length) {
-    
     return Delta()
       ..retain(index)
       ..delete(length);
@@ -160,9 +159,11 @@ class BlockDeleteRule extends DeleteRule {
     if (target.attributes != null &&
         (target.attributes.containsKey(NotusAttribute.game.key) ||
             target.attributes.containsKey(NotusAttribute.link.key))) {
+      final count = document.elementAt(_index).data.length;
+
       return Delta()
-        ..retain(skipped)
-        ..delete(document.elementAt(_index).data.length);
+        ..retain(math.min(skipped, index))
+        ..delete(math.max(count, length));
     }
     return Delta()
       ..retain(index)

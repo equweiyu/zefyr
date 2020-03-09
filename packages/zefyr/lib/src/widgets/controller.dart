@@ -251,6 +251,19 @@ class ZefyrController extends ChangeNotifier {
     if (hasEmbed) {
       change..insert('\n');
     }
+    final style = _document.collectStyle(index, 0);
+    final result = _document.lookupLine(index);
+    LineNode line = result.node;
+    final r = line.lookup(result.offset, inclusive: true);
+    LeafNode leaf = r.node;
+    if (leaf != null) {
+      int length = leaf.value.length;
+      if ((r.offset != 0 && length != r.offset) &&
+          (style.contains(NotusAttribute.link) ||
+              style.contains(NotusAttribute.game))) {
+        return;
+      }
+    }
 
     change.insert(string, attribute.toJson());
     _document.compose(change, ChangeSource.local);
