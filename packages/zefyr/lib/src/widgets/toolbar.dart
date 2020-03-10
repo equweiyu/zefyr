@@ -57,7 +57,7 @@ final kZefyrToolbarAttributeActions = <ZefyrToolbarAction, NotusAttributeKey>{
 
 /// Allows customizing appearance of [ZefyrToolbar].
 abstract class ZefyrToolbarDelegate {
-  List<Widget> buildButtons(BuildContext context, ZefyrScope editor);
+  Widget buildToolbar(BuildContext context, ZefyrScope editor);
 }
 
 /// Scaffold for [ZefyrToolbar].
@@ -210,7 +210,8 @@ class ZefyrToolbarState extends State<ZefyrToolbar>
     // new state each time we toggle overlay.
     final toolbar = ZefyrToolbarScaffold(
       key: _toolbarKey,
-      body: ZefyrButtonList(buttons: _buildButtons(context, editor)),
+      body: (widget.delegate ?? _DefaultZefyrToolbarDelegate())
+          .buildToolbar(context, editor),
     );
 
     layers.add(toolbar);
@@ -235,11 +236,6 @@ class ZefyrToolbarState extends State<ZefyrToolbar>
         child: Stack(children: layers),
       ),
     );
-  }
-
-  List<Widget> _buildButtons(BuildContext context, ZefyrScope editor) {
-    return (widget.delegate ?? _DefaultZefyrToolbarDelegate())
-        .buildButtons(context, editor);
   }
 }
 
@@ -355,5 +351,10 @@ class _DefaultZefyrToolbarDelegate implements ZefyrToolbarDelegate {
     } else {
       editor.formatSelection(attribute);
     }
+  }
+
+  @override
+  Widget buildToolbar(BuildContext context, ZefyrScope editor) {
+    return ZefyrButtonList(buttons: buildButtons(context, editor));
   }
 }
