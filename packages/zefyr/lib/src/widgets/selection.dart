@@ -576,7 +576,7 @@ class _SelectionToolbarState extends State<_SelectionToolbar> {
       final Offset start = Offset(boxes[0].start, block.preferredLineHeight);
       endpoints = <TextSelectionPoint>[TextSelectionPoint(start, null)];
     } else {
-      midpoint = Offset((boxes[0].start + boxes[1].start) / 2.0,
+      midpoint = Offset((boxes[0].start + boxes.last.end) / 2.0,
           boxes[0].bottom - block.preferredLineHeight);
       final Offset start = Offset(boxes.first.start, boxes.first.bottom);
       final Offset end = Offset(boxes.last.end, boxes.last.bottom);
