@@ -129,7 +129,11 @@ class RenderZefyrParagraph extends RenderParagraph
     TextSelection local = getLocalSelection(selection);
     if (local.isCollapsed) {
       final caret = CursorPainter.buildPrototype(preferredLineHeight);
-      final offset = getOffsetForCaret(local.extent, caret);
+      final localPosition = TextPosition(
+        offset: local.extent.offset + node.documentOffset,
+        affinity: local.extent.affinity,
+      );
+      final offset = getOffsetForCaret(localPosition, caret);
       return [
         ui.TextBox.fromLTRBD(
           offset.dx,
