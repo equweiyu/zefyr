@@ -35,7 +35,7 @@ abstract class ZefyrControllerDelegate {
   /// 返回值 是否替换原来的事件
   bool handleTap(
       TextSelection value, RenderEditableProxyBox box, Offset offset);
-  void replaceText(int index, int length, String text,
+  bool replaceText(int index, int length, String text,
       {TextSelection selection});
 }
 
@@ -133,7 +133,12 @@ class ZefyrController extends ChangeNotifier {
   /// Optionally updates selection if provided.
   void replaceText(int index, int length, String text,
       {TextSelection selection}) {
-    delegate?.replaceText(index, length, text, selection: selection);
+    if (delegate?.replaceText(index, length, text, selection: selection) ==
+        true) {
+      notifyListeners();
+
+      return;
+    }
 
     Delta delta;
 

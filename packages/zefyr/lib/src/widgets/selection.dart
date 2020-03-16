@@ -256,19 +256,19 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
       offset: position.offset,
       affinity: position.affinity,
     );
-    if (_didCaretTap && _selection == selection) {
-      _didCaretTap = false;
-      if (isToolbarVisible) {
-        hideToolbar();
-      } else {
-        showToolbar();
-      }
-    } else {
-      _didCaretTap = true;
-    }
 
     if (_scope.controller.delegate?.handleTap(selection, box, localPoint) !=
         true) {
+      if (_didCaretTap && _selection == selection) {
+        _didCaretTap = false;
+        if (isToolbarVisible) {
+          hideToolbar();
+        } else {
+          showToolbar();
+        }
+      } else {
+        _didCaretTap = true;
+      }
       _scope.controller.updateSelection(selection, source: ChangeSource.local);
     }
   }
