@@ -109,6 +109,8 @@ class LineNode extends ContainerNode<LeafNode>
     final local = math.min(this.length - offset, length);
 
     var result = NotusStyle();
+    if (offset == 0 && length == 0) return result;
+    if (length == 0) offset -= 1;
     final excluded = <NotusAttribute>{};
 
     void _handle(NotusStyle style) {
