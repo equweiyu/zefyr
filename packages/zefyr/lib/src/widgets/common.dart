@@ -14,6 +14,8 @@ import 'scope.dart';
 import 'theme.dart';
 import 'unknow.dart';
 
+bool ensureVisibleTag = true;
+
 /// Raw widget representing a single line of rich text document in Zefyr editor.
 ///
 /// See [ZefyrParagraph] and [ZefyrHeading] which wrap this widget and
@@ -42,8 +44,6 @@ class RawZefyrLine extends StatefulWidget {
 
 class _RawZefyrLineState extends State<RawZefyrLine> {
   final LayerLink _link = LayerLink();
-
-  int ensureVisibleTag = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -85,17 +85,19 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
   }
 
   void ensureVisible(BuildContext context, ZefyrScope scope) {
-    if (ensureVisibleTag > 3) {
-      return;
-    } else {
-      ensureVisibleTag += 1;
-    }
-
     if (scope.selection.isCollapsed &&
         widget.node.containsOffset(scope.selection.extentOffset)) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        bringIntoView(context);
-      });
+      if (ensureVisibleTag) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          bringIntoView(context);
+        });
+
+        Future.delayed(Duration(seconds: 1)).then((onValue) {
+          ensureVisibleTag = false;
+        });
+      } else {
+        return;
+      }
     }
   }
 

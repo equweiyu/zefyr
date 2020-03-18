@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:notus/notus.dart';
 import 'package:quill_delta/quill_delta.dart';
 import 'package:zefyr/util.dart';
+import 'package:zefyr/zefyr.dart';
 
 import 'editable_box.dart';
 
@@ -133,6 +134,8 @@ class ZefyrController extends ChangeNotifier {
   /// Optionally updates selection if provided.
   void replaceText(int index, int length, String text,
       {TextSelection selection}) {
+    ensureVisibleTag = true;
+
     if (delegate?.replaceText(index, length, text, selection: selection) ==
         true) {
       notifyListeners();
@@ -186,6 +189,8 @@ class ZefyrController extends ChangeNotifier {
   }
 
   void formatText(int index, int length, NotusAttribute attribute) {
+    ensureVisibleTag = true;
+
     final change = document.format(index, length, attribute);
     _lastChangeSource = ChangeSource.local;
 
@@ -212,6 +217,8 @@ class ZefyrController extends ChangeNotifier {
 
   /// Formats current selection with [attribute].
   void formatSelection(NotusAttribute attribute, {TextSelection selection}) {
+    ensureVisibleTag = true;
+
     final value = selection ?? _selection;
     int index = value.start;
     int length = value.end - index;
@@ -249,6 +256,7 @@ class ZefyrController extends ChangeNotifier {
   }
 
   void insert(String string, NotusAttribute attribute) {
+    ensureVisibleTag = true;
     final index = _selection.end;
     DeltaIterator iter = DeltaIterator(_document.toDelta());
     final previous = iter.skip(index);
