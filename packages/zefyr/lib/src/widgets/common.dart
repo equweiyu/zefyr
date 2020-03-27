@@ -34,8 +34,28 @@ class ZefyrLine extends StatefulWidget {
   _ZefyrLineState createState() => _ZefyrLineState();
 }
 
-class _ZefyrLineState extends State<ZefyrLine> {
+class _ZefyrLineState extends State<ZefyrLine> with WidgetsBindingObserver {
   final LayerLink _link = LayerLink();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    final scope = ZefyrScope.of(context);
+
+    if (scope.isEditable) {
+      ensureVisible(context, scope);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
