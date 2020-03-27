@@ -42,7 +42,8 @@ class RawZefyrLine extends StatefulWidget {
   _RawZefyrLineState createState() => _RawZefyrLineState();
 }
 
-class _RawZefyrLineState extends State<RawZefyrLine> {
+class _RawZefyrLineState extends State<RawZefyrLine>
+    with WidgetsBindingObserver {
   final LayerLink _link = LayerLink();
 
   @override
@@ -84,6 +85,24 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
     return content;
   }
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    final scope = ZefyrScope.of(context);
+    ensureVisible(context, scope);
+  }
+
   void ensureVisible(BuildContext context, ZefyrScope scope) {
     if (scope.selection.isCollapsed &&
         widget.node.containsOffset(scope.selection.extentOffset)) {
@@ -101,13 +120,12 @@ class _RawZefyrLineState extends State<RawZefyrLine> {
     }
   }
 
-  void bringIntoView(BuildContext context) {
+  void bringIntoView(BuildContext context) async {
     ScrollableState scrollable = Scrollable.of(context);
     final object = context.findRenderObject();
     assert(object.attached);
     final RenderAbstractViewport viewport = RenderAbstractViewport.of(object);
     assert(viewport != null);
-
     final double offset = scrollable.position.pixels;
     double target = viewport.getOffsetToReveal(object, 0.0).offset;
     if (target - offset < 0.0) {

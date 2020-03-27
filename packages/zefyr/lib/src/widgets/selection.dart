@@ -269,6 +269,7 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
       } else {
         _didCaretTap = true;
       }
+      ensureVisibleTag = true;
       _scope.controller.updateSelection(selection, source: ChangeSource.local);
     }
   }
