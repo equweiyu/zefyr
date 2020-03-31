@@ -6,20 +6,44 @@ import 'dart:math' as math;
 /// Performs a fast diff operation on two input strings based on provided
 /// [cursorPosition].
 DiffResult fastDiff(String oldText, String newText, int cursorPosition) {
+  final _cursorPosition =
+      _fastDiffCursorPosition(oldText, newText, cursorPosition);
+
   var delta = newText.length - oldText.length;
-  var limit = math.max(0, cursorPosition - delta);
+  var limit = math.max(0, _cursorPosition - delta);
   var end = oldText.length;
   while (end > limit && oldText[end - 1] == newText[end + delta - 1]) {
     end -= 1;
   }
   var start = 0;
-  var startLimit = cursorPosition - math.max(0, delta);
+  var startLimit = _cursorPosition - math.max(0, delta);
   while (start < startLimit && oldText[start] == newText[start]) {
     start += 1;
   }
   final String deleted = (start < end) ? oldText.substring(start, end) : '';
   final inserted = newText.substring(start, end + delta);
   return DiffResult(start, deleted, inserted);
+}
+
+int _fastDiffCursorPosition(
+    String oldText, String newText, int cursorPosition) {
+  var delta = newText.length - oldText.length;
+  if (cursorPosition != 0 || delta <= 0) return cursorPosition;
+
+  var limit = math.max(0, -delta);
+  var end = oldText.length;
+  while (end > limit && oldText[end - 1] == newText[end + delta - 1]) {
+    end -= 1;
+  }
+  var start = 0;
+  while (start < math.min(oldText.length, newText.length) &&
+      oldText[start] == newText[start]) {
+    start += 1;
+  }
+  final String deleted = (start < end) ? oldText.substring(start, end) : '';
+  final inserted = newText.substring(start, end + delta);
+  if (start > 0) return end + delta;
+  return cursorPosition;
 }
 
 /// A diff between two strings of text.
