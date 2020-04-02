@@ -28,9 +28,9 @@ class ZefyrHorizontalRule extends LeafRenderObjectWidget {
 }
 
 class RenderHorizontalRule extends RenderEditableBox {
-  static const _kPaddingBottom = 24.0;
+  static const _kPadding = 12.0;
   static const _kThickness = 1.0;
-  static const _kHeight = _kThickness + _kPaddingBottom;
+  static const _kHeight = _kThickness + _kPadding * 2;
 
   RenderHorizontalRule({
     @required EmbedNode node,
@@ -76,7 +76,7 @@ class RenderHorizontalRule extends RenderEditableBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
-    final rect = Rect.fromLTWH(0.0, 0.0, size.width, _kThickness);
+    final rect = Rect.fromLTWH(0.0, _kPadding, size.width, _kThickness);
     final paint = ui.Paint()..color = Colors.grey.shade200;
     context.canvas.drawRect(rect.shift(offset), paint);
   }
