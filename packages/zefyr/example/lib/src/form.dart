@@ -80,10 +80,12 @@ class _FormEmbeddedScreenState extends State<FormEmbeddedScreen> {
           )
         ],
       ),
-      body: ZefyrScaffold(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: form,
+      body: SafeArea(
+        child: ZefyrScaffold(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: form,
+          ),
         ),
       ),
     );

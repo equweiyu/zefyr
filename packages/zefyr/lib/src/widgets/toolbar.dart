@@ -308,7 +308,6 @@ class _ZefyrButtonListState extends State<ZefyrButtonList> {
 }
 
 class _DefaultZefyrToolbarDelegate implements ZefyrToolbarDelegate {
-  @override
   List<Widget> buildButtons(BuildContext context, ZefyrScope editor) {
     return [
       ZefyrButton.icon(
@@ -332,14 +331,17 @@ class _DefaultZefyrToolbarDelegate implements ZefyrToolbarDelegate {
         onPressed: () => _toggleAttribute(NotusAttribute.h2, editor),
       ),
       ZefyrButton.icon(
+        icon: Icons.code,
+        onPressed: () => _toggleAttribute(NotusAttribute.code, editor),
+      ),
+      ZefyrButton.icon(
+        icon: Icons.format_quote,
+        onPressed: () => _toggleAttribute(NotusAttribute.bq, editor),
+      ),
+      ZefyrButton.icon(
         icon: Icons.border_horizontal,
         onPressed: () =>
             _toggleAttribute(NotusAttribute.embed.horizontalRule, editor),
-      ),
-      ZefyrButton.icon(
-        icon: Icons.insert_link,
-        onPressed: () =>
-            editor.insert('string', NotusAttribute.link.fromString('value')),
       ),
     ];
   }
