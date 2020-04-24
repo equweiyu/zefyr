@@ -15,42 +15,16 @@ class FormEmbeddedScreen extends StatefulWidget {
   _FormEmbeddedScreenState createState() => _FormEmbeddedScreenState();
 }
 
-class _FormEmbeddedScreenState extends State<FormEmbeddedScreen> {
+class _FormEmbeddedScreenState extends State<FormEmbeddedScreen>
+    implements ZefyrControllerDelegate {
   ZefyrController _controller;
   final FocusNode _focusNode = FocusNode();
-
-  bool _handleTap(TextSelection value, ZefyrController controller) {
-    final style =
-        controller.document.collectStyle(value.start, value.end - value.start);
-    if (style.contains(NotusAttribute.embed)) {
-      EmbedAttribute embed = style.get(NotusAttribute.embed);
-      if (embed.type == EmbedType.image) {
-        print('tap image');
-        // controller.change(
-        // value,
-        // NotusAttribute.embed.image(
-        //     'https://image.xiniujiao.net/5cb8cee206d7051bf88cef29270855f5.jpg'));
-      }
-      return true;
-    }
-    return false;
-  }
-
-  bool _handleLongPress(TextSelection value, ZefyrController controller) {
-    final style =
-        controller.document.collectStyle(value.start, value.end - value.start);
-    if (style.contains(NotusAttribute.link)) {
-      // controller.formatSelection(NotusAttribute.link.fromString('123123'));
-      print('tag link');
-      return false;
-    }
-    return false;
-  }
 
   @override
   void initState() {
     _controller = ZefyrController(
       NotusDocument(),
+      delegate: this,
     );
     super.initState();
   }
@@ -117,5 +91,46 @@ class _FormEmbeddedScreenState extends State<FormEmbeddedScreen> {
         physics: ClampingScrollPhysics(),
       ),
     );
+  }
+
+  @override
+  bool handleLongPress(
+      TextSelection value, RenderEditableProxyBox box, Offset offset) {
+    return false;
+  }
+
+  @override
+  bool handleTap(
+      TextSelection value, RenderEditableProxyBox box, Offset offset) {
+    final style =
+        _controller.document.collectStyle(value.start, value.end - value.start);
+    if (style.contains(NotusAttribute.embed)) {
+      final result = _controller.document.lookupLine(value.start);
+      LineNode line = result.node;
+      final r = line.lookup(result.offset, inclusive: true);
+      LeafNode leaf = r.node;
+      int index = value.start - r.offset;
+      int length = leaf.value.length;
+      _controller.updateSelection(value.copyWith(
+        baseOffset: index,
+        extentOffset: index + length,
+      ));
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  bool replaceText(int index, int length, String text,
+      {TextSelection selection}) {
+    return false;
+  }
+
+  @override
+  bool showSelectionHandle(TextSelection value) {
+    final style =
+        _controller.document.collectStyle(value.start, value.end - value.start);
+    if (style.contains(NotusAttribute.embed)) return false;
+    return true;
   }
 }

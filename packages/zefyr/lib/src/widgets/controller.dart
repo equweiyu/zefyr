@@ -38,6 +38,7 @@ abstract class ZefyrControllerDelegate {
       TextSelection value, RenderEditableProxyBox box, Offset offset);
   bool replaceText(int index, int length, String text,
       {TextSelection selection});
+  bool showSelectionHandle(TextSelection value);
 }
 
 /// Controls instance of [ZefyrEditor].
