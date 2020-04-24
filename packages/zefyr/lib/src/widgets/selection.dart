@@ -62,9 +62,10 @@ class _ZefyrSelectionOverlayState extends State<ZefyrSelectionOverlay>
     if (!_scope.mode.canSelect) return true;
     final selection = _scope.selection;
     final isSelectionCollapsed = selection == null || selection.isCollapsed;
-    if (_scope.mode.canEdit) {
-      return isSelectionCollapsed || _scope.focusOwner != FocusOwner.editor;
-    }
+    // TODO:
+    // if (_scope.mode.canEdit) {
+    //   return isSelectionCollapsed || _scope.focusOwner != FocusOwner.editor;
+    // }
     return isSelectionCollapsed;
   }
 
@@ -415,6 +416,15 @@ class _SelectionHandleDriverState extends State<SelectionHandleDriver>
         type = _chooseType(endpoints[1], TextSelectionHandleType.right,
             TextSelectionHandleType.left);
         break;
+    }
+
+    TextPosition position = block.getPositionForOffset(point);
+    final selection = TextSelection.collapsed(
+      offset: position.offset,
+      affinity: position.affinity,
+    );
+    if (!(_scope.controller.delegate?.showSelectionHandle(selection) ?? true)) {
+      return Container();
     }
 
     final Size viewport = block.size;
