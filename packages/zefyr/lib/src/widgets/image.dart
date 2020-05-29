@@ -141,7 +141,8 @@ class RenderEditableImage extends RenderBox
 
   bool inImage(Offset offset) {
     return (offset.dx > size.width / 2 - _lastChildSize.width / 2 &&
-        offset.dx < size.width / 2 + _lastChildSize.width / 2);
+        offset.dx < size.width / 2 + _lastChildSize.width / 2 &&
+        offset.dy <= _lastChildSize.height);
   }
 
   @override
